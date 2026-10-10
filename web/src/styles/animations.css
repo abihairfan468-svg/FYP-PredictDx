@@ -1,0 +1,622 @@
+/* =================================================================
+   PredictDx Animations & Transitions
+   Micro-interactions, loading states, and page transitions
+   ================================================================= */
+
+/* ═════════════════════════════════════════════════════════════════
+   FADE & OPACITY ANIMATIONS
+   ═════════════════════════════════════════════════════════════════ */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--duration-base) var(--ease-in-out);
+}
+
+.animate-fade-out {
+  animation: fadeOut var(--duration-base) var(--ease-in-out);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   SLIDE ANIMATIONS
+   ═════════════════════════════════════════════════════════════════ */
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideLeft {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slideUp var(--duration-base) var(--ease-out);
+}
+
+.animate-slide-down {
+  animation: slideDown var(--duration-base) var(--ease-out);
+}
+
+.animate-slide-left {
+  animation: slideLeft var(--duration-base) var(--ease-out);
+}
+
+.animate-slide-right {
+  animation: slideRight var(--duration-base) var(--ease-out);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   SCALE ANIMATIONS
+   ═════════════════════════════════════════════════════════════════ */
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes scaleOut {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.animate-scale-in {
+  animation: scaleIn var(--duration-base) var(--ease-bounce);
+}
+
+.animate-scale-out {
+  animation: scaleOut var(--duration-base) var(--ease-in-out);
+}
+
+.animate-pop-in {
+  animation: popIn var(--duration-slow) var(--ease-bounce);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   ROTATION & SPIN ANIMATIONS
+   ═════════════════════════════════════════════════════════════════ */
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes spin-reverse {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
+
+.animate-spin-reverse {
+  animation: spin-reverse 1s linear infinite;
+}
+
+.animate-pulse {
+  animation: pulse 2s var(--ease-in-out) infinite;
+}
+
+.animate-bounce {
+  animation: bounce 1s var(--ease-in-out) infinite;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   SHIMMER & SKELETON LOADING
+   ═════════════════════════════════════════════════════════════════ */
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-color: var(--color-surface-2);
+  }
+  50% {
+    background-color: var(--color-surface);
+  }
+  100% {
+    background-color: var(--color-surface-2);
+  }
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+  background-size: 1000px 100%;
+}
+
+.animate-skeleton {
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   PROGRESS ANIMATIONS
+   ═════════════════════════════════════════════════════════════════ */
+
+@keyframes slideProgress {
+  0% {
+    width: 0%;
+  }
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes indeterminate {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+.progress-bar-fill {
+  animation: slideProgress 0.6s var(--ease-in-out) forwards;
+}
+
+.progress-indeterminate {
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-indeterminate::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent
+  );
+  animation: indeterminate 1.5s infinite;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   TEXT ANIMATIONS
+   ═════════════════════════════════════════════════════════════════ */
+
+@keyframes typewriter {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes blink {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeInText {
+  0% {
+    opacity: 0;
+    letter-spacing: -2px;
+  }
+  100% {
+    opacity: 1;
+    letter-spacing: 0;
+  }
+}
+
+.animate-typewriter {
+  animation: typewriter 0.5s steps(40, end);
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 3px solid var(--color-text-primary);
+  box-sizing: border-box;
+}
+
+.animate-blink {
+  animation: blink 1s steps(2, start) infinite;
+}
+
+.animate-fade-in-text {
+  animation: fadeInText var(--duration-slow) var(--ease-out);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   BUTTON STATE ANIMATIONS
+   ═════════════════════════════════════════════════════════════════ */
+
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Ripple effect on click */
+@keyframes ripple {
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.btn:active::after {
+  animation: ripple 0.6s ease-out;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   MODAL & OVERLAY ANIMATIONS
+   ═════════════════════════════════════════════════════════════════ */
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes modalExit {
+  from {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.95) translateY(-20px);
+  }
+}
+
+@keyframes backdropFade {
+  from {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  to {
+    opacity: 1;
+    backdrop-filter: blur(4px);
+  }
+}
+
+.modal-backdrop {
+  animation: backdropFade var(--duration-slow) var(--ease-in-out) forwards;
+}
+
+.modal-dialog {
+  animation: modalEnter var(--duration-slow) var(--ease-bounce) forwards;
+}
+
+.modal-dialog.is-exiting {
+  animation: modalExit var(--duration-base) var(--ease-in-out) forwards;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   FORM VALIDATION ANIMATIONS
+   ═════════════════════════════════════════════════════════════════ */
+
+@keyframes slideInError {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInSuccess {
+  from {
+    opacity: 0;
+    transform: translateX(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  10%,
+  30%,
+  50%,
+  70%,
+  90% {
+    transform: translateX(-2px);
+  }
+  20%,
+  40%,
+  60%,
+  80% {
+    transform: translateX(2px);
+  }
+}
+
+.form-error {
+  animation: slideInError var(--duration-base) var(--ease-out);
+}
+
+.form-success {
+  animation: slideInSuccess var(--duration-base) var(--ease-out);
+}
+
+.input-field.input-error {
+  animation: shake 0.4s var(--ease-in-out);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   TOAST & NOTIFICATION ANIMATIONS
+   ═════════════════════════════════════════════════════════════════ */
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+.toast {
+  animation: slideInRight var(--duration-base) var(--ease-out);
+}
+
+.toast.is-exiting {
+  animation: slideOutRight var(--duration-base) var(--ease-in-out);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   DROPDOWN & COLLAPSE ANIMATIONS
+   ═════════════════════════════════════════════════════════════════ */
+
+@keyframes expandHeight {
+  from {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+  to {
+    max-height: 500px;
+    opacity: 1;
+    overflow: visible;
+  }
+}
+
+@keyframes collapseHeight {
+  from {
+    max-height: 500px;
+    opacity: 1;
+  }
+  to {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+  }
+}
+
+.collapsible.is-open {
+  animation: expandHeight var(--duration-slow) var(--ease-out) forwards;
+}
+
+.collapsible.is-closing {
+  animation: collapseHeight var(--duration-slow) var(--ease-in-out) forwards;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   PAGE TRANSITION ANIMATIONS
+   ═════════════════════════════════════════════════════════════════ */
+
+@keyframes pageEnter {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pageExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+}
+
+.page-enter {
+  animation: pageEnter var(--duration-slow) var(--ease-out);
+}
+
+.page-exit {
+  animation: pageExit var(--duration-base) var(--ease-in-out);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   UTILITY ANIMATION CLASSES
+   ═════════════════════════════════════════════════════════════════ */
+
+/* Delay utilities */
+.animate-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animate-delay-200 {
+  animation-delay: 200ms;
+}
+
+.animate-delay-300 {
+  animation-delay: 300ms;
+}
+
+.animate-delay-500 {
+  animation-delay: 500ms;
+}
+
+/* Duration utilities */
+.animate-duration-fast {
+  animation-duration: var(--duration-fast);
+}
+
+.animate-duration-base {
+  animation-duration: var(--duration-base);
+}
+
+.animate-duration-slow {
+  animation-duration: var(--duration-slow);
+}
+
+/* Disable animations for reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}

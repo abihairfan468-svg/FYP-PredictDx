@@ -1,0 +1,313 @@
+// PredictDx database schema
+// AI Multimodal System for Early Detection and Future Risk Prediction of Chest Diseases
+// Air University Islamabad - FYP 2026
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role         { PATIENT DOCTOR ADMIN RADIOLOGIST }
+enum Gender       { MALE FEMALE OTHER }
+enum ApptStatus   { PENDING CONFIRMED COMPLETED CANCELLED NO_SHOW }
+enum StudyStatus  { UPLOADED QUEUED PROCESSING COMPLETED FAILED }
+enum DiseaseLabel { NORMAL PNEUMONIA TUBERCULOSIS }
+enum RiskBand     { LOW MEDIUM HIGH }
+enum VerifyStatus { UNREVIEWED CONFIRMED CORRECTED }
+
+// ---------------------------------------------------------------- 7.1 Smart Entry Portal
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  phone         String?   @unique
+  passwordHash  String
+  role          Role      @default(PATIENT)
+  fullName      String
+  isActive      Boolean   @default(true)
+  emailVerified Boolean   @default(false)
+  refreshTokenHash String?
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  patient       Patient?
+  doctor        Doctor?
+  auditLogs     AuditLog[]
+  sentMessages  Message[]      @relation("sender")
+  notifications Notification[]
+}
+
+// ---------------------------------------------------------------- 7.2 My Health Portal
+model Patient {
+  id               String   @id @default(uuid())
+  userId           String   @unique
+  user             User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mrn              String   @unique
+  dateOfBirth      DateTime
+  gender           Gender
+  bloodGroup       String?
+  city             String?
+  emergencyContact String?
+  createdAt        DateTime @default(now())
+
+  appointments     Appointment[]
+  studies          XrayStudy[]
+  clinicalRecords  ClinicalRecord[]
+  prescriptions    Prescription[]
+  reports          Report[]
+  riskAssessments  RiskAssessment[]
+}
+
+// ---------------------------------------------------------------- 7.3 Doctor Workspace
+model Doctor {
+  id              String  @id @default(uuid())
+  userId          String  @unique
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  specialization  String
+  pmdcNumber      String  @unique
+  qualification   String
+  experienceYears Int     @default(0)
+  consultationFee Decimal @db.Decimal(10, 2)
+  hospital        String?
+  isVerified      Boolean @default(false)
+
+  appointments      Appointment[]
+  consultations     Consultation[]
+  prescriptions     Prescription[]
+  verifiedDiagnoses DiagnosisResult[] @relation("verifier")
+}
+
+model Appointment {
+  id          String     @id @default(uuid())
+  patientId   String
+  doctorId    String
+  patient     Patient    @relation(fields: [patientId], references: [id])
+  doctor      Doctor     @relation(fields: [doctorId], references: [id])
+  scheduledAt DateTime
+  durationMin Int        @default(30)
+  status      ApptStatus @default(PENDING)
+  mode        String     @default("IN_PERSON")
+  reason      String?
+  createdAt   DateTime   @default(now())
+
+  payment      Payment?
+  consultation Consultation?
+
+  @@index([doctorId, scheduledAt])
+  @@index([patientId, scheduledAt])
+}
+
+model Payment {
+  id             String      @id @default(uuid())
+  appointmentId  String      @unique
+  appointment    Appointment @relation(fields: [appointmentId], references: [id])
+  amount         Decimal     @db.Decimal(10, 2)
+  currency       String      @default("PKR")
+  method         String
+  status         String      @default("PENDING")
+  transactionRef String?
+  paidAt         DateTime?
+}
+
+model Consultation {
+  id            String      @id @default(uuid())
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id])
+  doctorId      String
+  doctor        Doctor      @relation(fields: [doctorId], references: [id])
+  symptoms      String?
+  findings      String?
+  advice        String?
+  followUpDate  DateTime?
+  createdAt     DateTime    @default(now())
+}
+
+// ---------------------------------------------------------------- 7.4 Smart Diagnosis Center
+model ClinicalRecord {
+  id             String   @id @default(uuid())
+  patientId      String
+  patient        Patient  @relation(fields: [patientId], references: [id])
+  recordedAt     DateTime @default(now())
+  age            Int
+  gender         Gender
+  smoker         Boolean  @default(false)
+  coughDays      Int?
+  fever          Boolean  @default(false)
+  weightLoss     Boolean  @default(false)
+  nightSweats    Boolean  @default(false)
+  breathlessness Boolean  @default(false)
+  chestPain      Boolean  @default(false)
+  diabetes       Boolean  @default(false)
+  hivPositive    Boolean  @default(false)
+  tbContact      Boolean  @default(false)
+  priorTb        Boolean  @default(false)
+  spo2           Int?
+  temperatureC   Decimal? @db.Decimal(4, 1)
+  bmi            Decimal? @db.Decimal(4, 1)
+
+  riskAssessments RiskAssessment[]
+
+  @@index([patientId, recordedAt])
+}
+
+model XrayStudy {
+  id             String      @id @default(uuid())
+  patientId      String
+  patient        Patient     @relation(fields: [patientId], references: [id])
+  uploadedById   String
+  storageKey     String
+  originalName   String
+  mimeType       String
+  fileSizeBytes  Int
+  checksumSha256 String      @unique
+  view           String      @default("PA")
+  status         StudyStatus @default(UPLOADED)
+  failureReason  String?
+  capturedAt     DateTime?
+  createdAt      DateTime    @default(now())
+
+  diagnosis DiagnosisResult?
+
+  @@index([patientId, createdAt])
+  @@index([status])
+}
+
+model DiagnosisResult {
+  id             String       @id @default(uuid())
+  studyId        String       @unique
+  study          XrayStudy    @relation(fields: [studyId], references: [id], onDelete: Cascade)
+  modelVersionId String
+  modelVersion   ModelVersion @relation(fields: [modelVersionId], references: [id])
+
+  predictedLabel DiseaseLabel
+  confidence     Decimal      @db.Decimal(5, 4)
+  probNormal     Decimal      @db.Decimal(5, 4)
+  probPneumonia  Decimal      @db.Decimal(5, 4)
+  probTb         Decimal      @db.Decimal(5, 4)
+  gradcamKey     String?
+  boundingBoxes  Json?
+  inferenceMs    Int?
+
+  verifyStatus  VerifyStatus  @default(UNREVIEWED)
+  verifiedLabel DiseaseLabel?
+  verifiedById  String?
+  verifiedBy    Doctor?       @relation("verifier", fields: [verifiedById], references: [id])
+  doctorNotes   String?
+  verifiedAt    DateTime?
+
+  createdAt      DateTime @default(now())
+  riskAssessment RiskAssessment?
+
+  @@index([predictedLabel, createdAt])
+  @@index([verifyStatus])
+}
+
+model RiskAssessment {
+  id               String           @id @default(uuid())
+  patientId        String
+  patient          Patient          @relation(fields: [patientId], references: [id])
+  diagnosisId      String?          @unique
+  diagnosis        DiagnosisResult? @relation(fields: [diagnosisId], references: [id])
+  clinicalRecordId String?
+  clinicalRecord   ClinicalRecord?  @relation(fields: [clinicalRecordId], references: [id])
+
+  riskScore      Decimal  @db.Decimal(5, 4)
+  riskBand       RiskBand
+  horizonMonths  Int      @default(12)
+  topFactors     Json
+  modelVersionId String?
+  createdAt      DateTime @default(now())
+
+  @@index([patientId, createdAt])
+}
+
+model ModelVersion {
+  id              String   @id @default(uuid())
+  name            String
+  version         String
+  architecture    String
+  fileKey         String
+  accuracy        Decimal? @db.Decimal(5, 4)
+  recallTb        Decimal? @db.Decimal(5, 4)
+  recallPneumonia Decimal? @db.Decimal(5, 4)
+  aucMacro        Decimal? @db.Decimal(5, 4)
+  trainedAt       DateTime
+  isActive        Boolean  @default(false)
+  notes           String?
+
+  diagnoses DiagnosisResult[]
+
+  @@unique([name, version])
+}
+
+// ---------------------------------------------------------------- 7.5 Reports & Care Records
+model Prescription {
+  id             String   @id @default(uuid())
+  patientId      String
+  doctorId       String
+  patient        Patient  @relation(fields: [patientId], references: [id])
+  doctor         Doctor   @relation(fields: [doctorId], references: [id])
+  consultationId String?
+  medicines      Json
+  instructions   String?
+  issuedAt       DateTime @default(now())
+}
+
+model Report {
+  id         String   @id @default(uuid())
+  patientId  String
+  patient    Patient  @relation(fields: [patientId], references: [id])
+  studyId    String?
+  type       String
+  storageKey String
+  createdAt  DateTime @default(now())
+}
+
+// ---------------------------------------------------------------- 7.6 CareConnect Hub
+model Message {
+  id          String    @id @default(uuid())
+  threadId    String
+  senderId    String
+  sender      User      @relation("sender", fields: [senderId], references: [id])
+  recipientId String?
+  isBot       Boolean   @default(false)
+  body        String
+  readAt      DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([threadId, createdAt])
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id])
+  title     String
+  body      String
+  type      String
+  payload   Json?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, createdAt])
+}
+
+// ---------------------------------------------------------------- 7.8 / 7.9 Admin & Central Records
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String?
+  actor      User?    @relation(fields: [actorId], references: [id])
+  action     String
+  entityType String
+  entityId   String
+  ipAddress  String?
+  userAgent  String?
+  createdAt  DateTime @default(now())
+
+  @@index([entityType, entityId])
+  @@index([actorId, createdAt])
+}

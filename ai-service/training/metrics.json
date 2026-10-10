@@ -1,0 +1,95 @@
+{
+  "classes": [
+    "NORMAL",
+    "PNEUMONIA",
+    "TUBERCULOSIS",
+    "NOT_CXR"
+  ],
+  "test_images": 1858,
+  "accuracy": 0.9483315392895587,
+  "per_class": {
+    "NORMAL": {
+      "precision": 0.9207,
+      "recall": 0.931,
+      "f1-score": 0.9258,
+      "support": 536.0
+    },
+    "PNEUMONIA": {
+      "precision": 0.9276,
+      "recall": 0.9276,
+      "f1-score": 0.9276,
+      "support": 497.0
+    },
+    "TUBERCULOSIS": {
+      "precision": 0.9422,
+      "recall": 0.9233,
+      "f1-score": 0.9327,
+      "support": 300.0
+    },
+    "NOT_CXR": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1-score": 1.0,
+      "support": 525.0
+    }
+  },
+  "roc_auc": {
+    "NORMAL": 0.9909750604014722,
+    "PNEUMONIA": 0.9916649049329038,
+    "TUBERCULOSIS": 0.993594351732991,
+    "NOT_CXR": 1.0
+  },
+  "confusion_matrix": [
+    [
+      499,
+      31,
+      6,
+      0
+    ],
+    [
+      25,
+      461,
+      11,
+      0
+    ],
+    [
+      18,
+      5,
+      277,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      525
+    ]
+  ],
+  "accuracy_by_source": {
+    "NORMAL/adult": 0.9233,
+    "NORMAL/child": 0.9407,
+    "NOT_CXR/flower": 1.0,
+    "NOT_CXR/object": 1.0,
+    "NOT_CXR/pet": 1.0,
+    "PNEUMONIA/adult": 0.868,
+    "PNEUMONIA/child": 0.9667,
+    "TUBERCULOSIS/adult": 0.9233
+  },
+  "gate": {
+    "threshold": 0.7932097315788269,
+    "test_xrays_accepted": 0.9932483120780196,
+    "test_photos_blocked": 1.0
+  },
+  "stage": "phase 1 (frozen backbone)",
+  "created": "2026-10-10 13:30",
+  "fine_tuning_experiment": {
+    "note": "conv5 fine-tuning for 3 epochs on CPU scored lower on the same test set, so the phase-1 model is deployed",
+    "test_accuracy": 0.9208826695371367,
+    "roc_auc": {
+      "NORMAL": 0.9901734707702035,
+      "PNEUMONIA": 0.9891930569456416,
+      "TUBERCULOSIS": 0.9934467265725289,
+      "NOT_CXR": 1.0
+    }
+  }
+}

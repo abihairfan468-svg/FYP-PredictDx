@@ -1,0 +1,95 @@
+/* =====================================================================
+   Dark theme. Active when <html data-theme="dark"> (toggle in the top bar
+   and on the sign-in page; light stays the default, the choice is remembered).
+   Only colours change here - layout and the light theme are untouched.
+   ===================================================================== */
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b1422;
+  --bg-deep: #0f1b2d;
+  --surface: #111d30;
+  --surface-2: #16243a;
+  --surface-3: #1c2d47;
+  --line: #26374f;
+  --line-soft: #1e2e45;
+  --ink: #e6edf7;
+  --ink-2: #b8c5d8;
+  --muted: #8a9ab2;
+
+  --sky: #13294a;
+  --sky-line: #24446e;
+  --sky-soft: #10213b;
+  --sky-ink: #9cc4f0;
+  --title: #e6edf7;
+  --navy: #e6edf7;
+  --navy-2: #9cc4f0;
+
+  --brand: #3b8ae0;
+  --brand-deep: #2f78c8;
+  --brand-soft: #13294a;
+  --brand-ring: #2d5a8e;
+
+  --ok: #4ade80;
+  --ok-soft: #10301f;
+  --warn: #fbbf24;
+  --warn-soft: #33260c;
+  --crit: #f87171;
+  --crit-soft: #3a1515;
+  --lime: #8b93f0;
+  --lime-soft: #1c1f45;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+
+  /* design-token names used by the shared components */
+  --color-bg: #0b1422;
+  --color-bg-secondary: #0b1422;
+  --color-bg-tertiary: #16243a;
+  --color-surface: #111d30;
+  --color-surface-2: #16243a;
+  --color-surface-hover: #1c2d47;
+  --color-text-primary: #e6edf7;
+  --color-text-secondary: #b8c5d8;
+  --color-text-muted: #8a9ab2;
+  --color-border: #26374f;
+  --color-border-dark: #33475f;
+  --color-border-subtle: #1e2e45;
+  --gradient-hero: linear-gradient(135deg, #0f1b2d 0%, #11223a 50%, #13294a 100%);
+  --gradient-blue-light: linear-gradient(135deg, #111d30 0%, #13294a 100%);
+}
+
+/* Surfaces that were hard-coded white in the light theme */
+/* :where() keeps this low-specificity so coloured states (.chip.on, .chip.ok, .au-role.on) still win */
+:root[data-theme='dark'] :where(.btn-g, .chip, .chip:hover, .inp, .otp input,
+  .rail, .mobnav, .whoami, .topbar, .toast, .modal, .vitals label, .chart-tip, .au-card, .au-role) {
+  background: var(--surface);
+}
+:root[data-theme='dark'] .tabs button.on,
+:root[data-theme='dark'] .bub.them,
+:root[data-theme='dark'] .inp select option,
+:root[data-theme='dark'] .input-field,
+:root[data-theme='dark'] .input-field:focus,
+:root[data-theme='dark'] .au .input-field,
+:root[data-theme='dark'] .au select.inp { background: var(--surface); }
+:root[data-theme='dark'] :is(.inp, .otp input, .au .input-field, .au select.inp) { border-color: var(--line); }
+:root[data-theme='dark'] .inp input::placeholder,
+:root[data-theme='dark'] .inp textarea::placeholder { color: #6b7c95; }
+:root[data-theme='dark'] .btn-g:hover:not(:disabled) { background: var(--surface-2); border-color: var(--line); }
+:root[data-theme='dark'] .btn-s:hover:not(:disabled) { background: #1a3558; }
+:root[data-theme='dark'] .btn-d:hover:not(:disabled) { background: #4a1c1c; }
+:root[data-theme='dark'] .btn-p:disabled { background: #27496f; border-color: #27496f; color: #9fb4cc; }
+:root[data-theme='dark'] .tabs { background: var(--surface-3); }
+:root[data-theme='dark'] .av { background: #1a3558; }
+:root[data-theme='dark'] .av.c2 { background: #12352a; color: #6fd3a8; }
+:root[data-theme='dark'] .av.c3 { background: #22264f; color: #aab0f5; }
+:root[data-theme='dark'] .toast.err { border-color: #7a2a2a; }
+:root[data-theme='dark'] .toast.dev { border-color: #4a51a0; background: #1c1f45; }
+:root[data-theme='dark'] .bub.bot { border-color: #33387a; }
+:root[data-theme='dark'] .scrim { background: rgba(0, 0, 0, 0.6); }
+:root[data-theme='dark'] .notice.warn { color: #fcd98a; }
+:root[data-theme='dark'] .notice.crit { color: #fca5a5; }
+:root[data-theme='dark'] .dropzone { border-color: #33475f; }
+:root[data-theme='dark'] .au-art { background: #07182f; }
+
+/* Theme switch button */
+.theme-btn { display: inline-grid; place-items: center; }

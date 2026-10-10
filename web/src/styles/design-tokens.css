@@ -1,0 +1,443 @@
+/* =================================================================
+   PredictDx Design System - Design Tokens
+   Modern healthcare platform color palette, typography & spacing
+   ================================================================= */
+
+:root {
+  /* ═════════════════════════════════════════════════════════════
+     PRIMARY COLORS (Light Mode - White & Light Blue Theme)
+     ═════════════════════════════════════════════════════════════ */
+
+  /* Primary Blue - Actions, CTAs, focus */
+  --primary-blue: #1A6DC4;
+  --primary-blue-hover: #155AA3;
+  --primary-blue-dark: #174E8C;
+  --primary-blue-light: #E7F0FB;
+  --primary-blue-lighter: #DBE9F9;
+  --primary-blue-tint-10: #F0F6FD;
+  --primary-blue-soft: #E7F0FB;
+  --primary-blue-ring: #A9C7EA;
+
+  /* Medical Blue - Secondary accent */
+  --medical-blue: #1B5E9C;
+  --medical-blue-light: #E8F1F8;
+
+  /* Success - Positive states */
+  --success-green: #15803D;
+  --success-green-dark: #047857;
+  --success-green-light: #E6F4EA;
+  --success-green-bg: #F0FDF4;
+
+  /* Warning - Caution, alerts */
+  --warning-amber: #B45309;
+  --warning-amber-dark: #B45309;
+  --warning-amber-light: #FDF1E3;
+  --warning-amber-bg: #FEFCE8;
+
+  /* Critical - Errors, high-risk */
+  --critical-red: #B91C1C;
+  --critical-red-dark: #B91C1C;
+  --critical-red-light: #FDECEC;
+  --critical-red-bg: #FEF5F5;
+
+  /* Status Info */
+  --status-info: #1A6DC4;
+  --status-info-light: #E7F0FB;
+  --status-info-bg: #F0F9FF;
+
+  /* ═════════════════════════════════════════════════════════════
+     NEUTRAL COLORS (Light Mode - White & Light Blue)
+     ═════════════════════════════════════════════════════════════ */
+
+  --bg-light: #FFFFFF;
+  --bg-light-secondary: #F3F6FA;
+  --bg-light-tertiary: #E9EFF6;
+  --surface-light: #FFFFFF;
+  --surface-light-2: #F5F8FC;
+  --surface-light-hover: #F5F8FC;
+  --text-light-primary: #0F2744;
+  --text-light-secondary: #475569;
+  --text-light-muted: #64748B;
+  --border-light: #D9E1EA;
+  --border-light-dark: #C6D2DF;
+  --border-light-subtle: #E5EAF0;
+
+  /* ═════════════════════════════════════════════════════════════
+     ACTIVE COLOR SCHEME (set based on light/dark mode)
+     White & Light Blue Theme
+     ═════════════════════════════════════════════════════════════ */
+
+  --color-bg: var(--bg-light-secondary);
+  --color-bg-secondary: var(--bg-light-secondary);
+  --color-bg-tertiary: var(--bg-light-tertiary);
+  --color-surface: var(--surface-light);
+  --color-surface-2: var(--surface-light-2);
+  --color-surface-hover: var(--surface-light-hover);
+  --color-text-primary: var(--text-light-primary);
+  --color-text-secondary: var(--text-light-secondary);
+  --color-text-muted: var(--text-light-muted);
+  --color-border: var(--border-light);
+  --color-border-dark: var(--border-light-dark);
+  --color-border-subtle: var(--border-light-subtle);
+
+  /* ═════════════════════════════════════════════════════════════
+     GRADIENTS (White & Light Blue Theme)
+     ═════════════════════════════════════════════════════════════ */
+
+  --gradient-hero: linear-gradient(135deg, #FFFFFF 0%, #F0F7FE 50%, #E6F0FF 100%);
+  --gradient-primary: linear-gradient(135deg, #0066CC 0%, #0052A3 100%);
+  --gradient-blue-light: linear-gradient(135deg, #F8FBFF 0%, #E6F0FF 100%);
+  --gradient-heatmap: radial-gradient(
+    ellipse at center,
+    rgba(255, 58, 36, 0.95) 0%,
+    rgba(255, 146, 0, 0.55) 38%,
+    rgba(255, 226, 70, 0.18) 70%,
+    transparent 100%
+  );
+
+  /* ═════════════════════════════════════════════════════════════
+     TYPOGRAPHY
+     ═════════════════════════════════════════════════════════════ */
+
+  --font-display: 'Public Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-body: 'Public Sans', 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Fira Code', 'JetBrains Mono', monospace;
+
+  /* Font Sizes */
+  --fs-h1: 48px;
+  --fw-h1: 700;
+  --lh-h1: 1.2;
+
+  --fs-h2: 32px;
+  --fw-h2: 700;
+  --lh-h2: 1.3;
+
+  --fs-h3: 20px;
+  --fw-h3: 600;
+  --lh-h3: 1.4;
+
+  --fs-body-lg: 16px;
+  --fw-body: 400;
+  --lh-body: 1.5;
+
+  --fs-body: 14px;
+  --fs-small: 12px;
+  --fw-small: 500;
+  --fs-tiny: 11px;
+  --fw-tiny: 600;
+
+  /* ═════════════════════════════════════════════════════════════
+     SPACING (4px baseline grid)
+     ═════════════════════════════════════════════════════════════ */
+
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 24px;
+  --space-2xl: 32px;
+  --space-3xl: 48px;
+
+  /* ═════════════════════════════════════════════════════════════
+     BORDER RADIUS
+     ═════════════════════════════════════════════════════════════ */
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  /* ═════════════════════════════════════════════════════════════
+     SHADOWS
+     ═════════════════════════════════════════════════════════════ */
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.12);
+  --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.15);
+
+  --shadow-focus: 0 0 0 3px rgba(26, 109, 196, 0.12);
+  --shadow-primary-hover: none;
+
+  /* ═════════════════════════════════════════════════════════════
+     TRANSITIONS
+     ═════════════════════════════════════════════════════════════ */
+
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-slow: 300ms;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   FORCE LIGHT MODE ONLY - White & Light Blue Theme
+   ═════════════════════════════════════════════════════════════════ */
+
+:root {
+  --color-bg: var(--bg-light-secondary);
+  --color-bg-secondary: var(--bg-light-secondary);
+  --color-bg-tertiary: var(--bg-light-tertiary);
+  --color-surface: var(--surface-light);
+  --color-surface-2: var(--surface-light-2);
+  --color-surface-hover: var(--surface-light-hover);
+  --color-text-primary: var(--text-light-primary);
+  --color-text-secondary: var(--text-light-secondary);
+  --color-text-muted: var(--text-light-muted);
+  --color-border: var(--border-light);
+  --color-border-dark: var(--border-light-dark);
+  --color-border-subtle: var(--border-light-subtle);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   BASE STYLES
+   ═════════════════════════════════════════════════════════════════ */
+
+* {
+  box-sizing: border-box;
+}
+
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: var(--color-bg);
+  color: var(--color-text-primary);
+  font-family: var(--font-body);
+  font-size: var(--fs-body);
+  line-height: var(--lh-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   TYPOGRAPHY
+   ═════════════════════════════════════════════════════════════════ */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+h1 {
+  font-size: var(--fs-h1);
+  font-weight: var(--fw-h1);
+  line-height: var(--lh-h1);
+}
+
+h2 {
+  font-size: var(--fs-h2);
+  font-weight: var(--fw-h2);
+  line-height: var(--lh-h2);
+}
+
+h3 {
+  font-size: var(--fs-h3);
+  font-weight: var(--fw-h3);
+  line-height: var(--lh-h3);
+}
+
+p {
+  margin: 0;
+}
+
+a {
+  color: var(--primary-blue);
+  text-decoration: none;
+  transition: color var(--duration-fast) var(--ease-in-out);
+}
+
+a:hover {
+  color: var(--primary-blue-hover);
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  padding: 0;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   FORM ELEMENTS
+   ═════════════════════════════════════════════════════════════════ */
+
+input,
+select,
+textarea {
+  border: none;
+  outline: none;
+}
+
+input[type="checkbox"] {
+  accent-color: var(--primary-blue);
+}
+
+input[type="radio"] {
+  accent-color: var(--primary-blue);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   FOCUS & INTERACTIONS
+   ═════════════════════════════════════════════════════════════════ */
+
+:focus-visible {
+  outline: 2px solid var(--primary-blue);
+  outline-offset: 2px;
+  border-radius: var(--radius-md);
+}
+
+::selection {
+  background: var(--primary-blue-light);
+  color: var(--color-text-primary);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   SCROLLBAR STYLING
+   ═════════════════════════════════════════════════════════════════ */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-blue);
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   MOTION & ANIMATION
+   ═════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* ═════════════════════════════════════════════════════════════════
+   VISIBILITY
+   ═════════════════════════════════════════════════════════════════ */
+
+[hidden] {
+  display: none !important;
+}
+
+/* Screen reader only */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}

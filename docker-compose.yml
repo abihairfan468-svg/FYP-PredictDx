@@ -1,0 +1,51 @@
+services:
+  db:
+    image: postgres:16
+    container_name: predictdx-db
+    environment:
+      POSTGRES_USER: predictdx
+      POSTGRES_PASSWORD: predictdx
+      POSTGRES_DB: predictdx
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U predictdx"]
+      interval: 10s
+      retries: 5
+
+  redis:
+    image: redis:7
+    container_name: predictdx-redis
+    ports:
+      - "6379:6379"
+
+  minio:
+    image: minio/minio
+    container_name: predictdx-minio
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: predictdx
+      MINIO_ROOT_PASSWORD: predictdx123
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - miniodata:/data
+
+  ai:
+    build: ./ai-service
+    container_name: predictdx-ai
+    environment:
+      INTERNAL_API_KEY: dev-internal-key
+      STUB_MODE: "true"
+      STORAGE_PATH: /storage
+    volumes:
+      - ./backend/storage:/storage
+    ports:
+      - "8000:8000"
+
+volumes:
+  pgdata:
+  miniodata:

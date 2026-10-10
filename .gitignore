@@ -1,0 +1,54 @@
+# ---- Node / NestJS ----
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+npm-debug.log*
+yarn-error.log*
+
+# ---- Secrets (NEVER commit) ----
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# ---- Python ----
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# ---- Models and datasets (too large for GitHub, 100 MB limit) ----
+*.keras
+# ...except the deployed model (30 MB), which the app needs to run
+!ai-service/models/predictdx_densenet121_v1.keras
+*.h5
+*.pb
+*.onnx
+*.tflite
+saved_model/
+dataset/
+datasets/
+data/raw/
+
+# ---- Uploaded and generated files ----
+/backend/storage/
+uploads/
+*.dcm
+
+# ---- Editors and OS ----
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ---- Flutter (added later) ----
+mobile/build/
+mobile/.dart_tool/
+node_modules/
+
+LOGINS.md

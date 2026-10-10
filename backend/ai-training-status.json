@@ -1,0 +1,220 @@
+{
+  "_comment": "Written by ai-service/training/export_to_app.py from the real training run.",
+  "status": "trained",
+  "updatedAt": "2026-10-10",
+  "owner": "Abiha Irfan",
+  "datasets": [
+    {
+      "name": "Adult normal + TB (Balanced_dataset_clean, incl. TBX11K)",
+      "images": 4000,
+      "classes": "Normal \u00b7 TB",
+      "state": "pre-processed"
+    },
+    {
+      "name": "Paediatric chest X-ray (Kermany)",
+      "images": 3579,
+      "classes": "Normal \u00b7 Pneumonia",
+      "state": "pre-processed"
+    },
+    {
+      "name": "PredictDX adult pneumonia",
+      "images": 1316,
+      "classes": "Pneumonia (adult)",
+      "state": "pre-processed"
+    },
+    {
+      "name": "Not a chest X-ray (flowers, cats & dogs, objects)",
+      "images": 3500,
+      "classes": "Rejected input",
+      "state": "pre-processed"
+    },
+    {
+      "name": "Local hospital cases",
+      "images": 0,
+      "classes": "Normal \u00b7 Pneumonia \u00b7 TB",
+      "state": "collection in progress"
+    }
+  ],
+  "pipeline": [
+    {
+      "step": "Data collection & cleaning (duplicates and mislabelled images removed)",
+      "state": "done"
+    },
+    {
+      "step": "Pre-processing (greyscale, 224\u00d7224 centre crop)",
+      "state": "done"
+    },
+    {
+      "step": "DenseNet-121 transfer learning (frozen + fine-tuned conv5)",
+      "state": "done"
+    },
+    {
+      "step": "Chest X-ray gate (NOT_CXR class + feature distance)",
+      "state": "done"
+    },
+    {
+      "step": "Activation heatmaps (CAM)",
+      "state": "done"
+    },
+    {
+      "step": "Future risk estimate (rule-based, symptoms + X-ray)",
+      "state": "done"
+    },
+    {
+      "step": "Integration with ai-service and the app",
+      "state": "done"
+    },
+    {
+      "step": "Risk model trained on follow-up visits",
+      "state": "needs longitudinal data"
+    }
+  ],
+  "run": {
+    "model": "DenseNet-121 (ImageNet weights, fine-tuned)",
+    "epochsDone": 43,
+    "epochsPlanned": 43,
+    "trainAccuracy": [
+      0.722,
+      0.861,
+      0.882,
+      0.89,
+      0.897,
+      0.904,
+      0.908,
+      0.907,
+      0.907,
+      0.911,
+      0.907,
+      0.909,
+      0.914,
+      0.913,
+      0.913,
+      0.916,
+      0.916,
+      0.915,
+      0.911,
+      0.911,
+      0.914,
+      0.914,
+      0.918,
+      0.915,
+      0.916,
+      0.919,
+      0.916,
+      0.915,
+      0.915,
+      0.914,
+      0.916,
+      0.915,
+      0.916,
+      0.916,
+      0.915,
+      0.92,
+      0.917,
+      0.911,
+      0.919,
+      0.916,
+      0.919,
+      0.918,
+      0.918
+    ],
+    "valAccuracy": [
+      0.893,
+      0.913,
+      0.918,
+      0.919,
+      0.924,
+      0.923,
+      0.924,
+      0.926,
+      0.928,
+      0.928,
+      0.929,
+      0.936,
+      0.935,
+      0.935,
+      0.936,
+      0.933,
+      0.936,
+      0.93,
+      0.934,
+      0.938,
+      0.934,
+      0.935,
+      0.934,
+      0.937,
+      0.939,
+      0.935,
+      0.939,
+      0.939,
+      0.939,
+      0.935,
+      0.937,
+      0.936,
+      0.933,
+      0.939,
+      0.939,
+      0.937,
+      0.94,
+      0.936,
+      0.938,
+      0.938,
+      0.938,
+      0.938,
+      0.936
+    ],
+    "valLoss": [
+      0.301,
+      0.249,
+      0.227,
+      0.209,
+      0.202,
+      0.196,
+      0.188,
+      0.194,
+      0.182,
+      0.184,
+      0.178,
+      0.174,
+      0.173,
+      0.171,
+      0.17,
+      0.175,
+      0.169,
+      0.176,
+      0.167,
+      0.166,
+      0.169,
+      0.168,
+      0.169,
+      0.167,
+      0.163,
+      0.169,
+      0.166,
+      0.163,
+      0.162,
+      0.168,
+      0.165,
+      0.163,
+      0.173,
+      0.164,
+      0.16,
+      0.165,
+      0.158,
+      0.16,
+      0.158,
+      0.159,
+      0.158,
+      0.16,
+      0.166
+    ],
+    "testAccuracy": 0.9483,
+    "testImages": 1858,
+    "perClassRecall": {
+      "NORMAL": 0.931,
+      "PNEUMONIA": 0.9276,
+      "TUBERCULOSIS": 0.9233,
+      "NOT_CXR": 1.0
+    }
+  }
+}

@@ -1,0 +1,51 @@
+split         test  train  val
+label                         
+NORMAL         536   2506  537
+NOT_CXR        525   2450  525
+PNEUMONIA      497   2322  497
+TUBERCULOSIS   300   1400  300
+12395 images, 10395 cached, 2000 to do
+512/2000  11.0 img/s  ~2.3 min left
+1024/2000  10.8 img/s  ~1.5 min left
+1536/2000  10.3 img/s  ~0.8 min left
+2000/2000  10.2 img/s  ~0.0 min left
+cached 12395
+{'train': (8678, 1024), 'val': (1859, 1024), 'test': (1858, 1024)}
+phase 1 head: 43 epochs, val acc 0.940
+D:\PredictDx-AI\venv\Lib\site-packages\keras\src\trainers\epoch_iterator.py:74: UserWarning: `shuffle=True` was passed, but will be ignored since the data `x` was provided as a tf.data.Dataset. The Dataset is expected to already be shuffled (via `.shuffle(buffer_size)`).
+  self.data_adapter = data_adapters.get_data_adapter(
+Epoch 1/3
+272/272 - 1099s - 4s/step - accuracy: 0.8822 - loss: 0.3074 - val_accuracy: 0.9112 - val_loss: 0.2260
+Epoch 2/3
+272/272 - 1001s - 4s/step - accuracy: 0.9100 - loss: 0.2366 - val_accuracy: 0.9215 - val_loss: 0.2112
+Epoch 3/3
+272/272 - 785s - 3s/step - accuracy: 0.9209 - loss: 0.2160 - val_accuracy: 0.9182 - val_loss: 0.2292
+phase 2: 48.1 min
+              precision    recall  f1-score   support
+
+      NORMAL      0.817     0.972     0.888       536
+   PNEUMONIA      0.938     0.853     0.894       497
+TUBERCULOSIS      0.992     0.803     0.888       300
+     NOT_CXR      1.000     1.000     1.000       525
+
+    accuracy                          0.921      1858
+   macro avg      0.937     0.907     0.917      1858
+weighted avg      0.929     0.921     0.921      1858
+
+ROC-AUC {'NORMAL': 0.9902, 'PNEUMONIA': 0.9892, 'TUBERCULOSIS': 0.9934, 'NOT_CXR': 1.0} 
+ [[521  14   1   0]
+ [ 72 424   1   0]
+ [ 45  14 241   0]
+ [  0   0   0 525]] 
+ label         source
+NORMAL        adult     0.9667
+              child     0.9788
+NOT_CXR       flower    1.0000
+              object    1.0000
+              pet       1.0000
+PNEUMONIA     adult     0.7970
+              child     0.8900
+TUBERCULOSIS  adult     0.8033
+Name: correct, dtype: float64
+gate threshold 0.8105 | test X-rays accepted 0.986 | test photos blocked 1.000
+saved to D:\PredictDx-AI\out

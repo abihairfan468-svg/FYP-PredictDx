@@ -1,0 +1,10 @@
+tensorflow-cpu==2.19.*      # TensorFlow does not support Python 3.14 yet: use Python 3.12
+fastapi==0.115.*
+uvicorn[standard]
+python-multipart
+pydantic>=2
+numpy
+pillow
+opencv-python-headless
+scipy
+pydicom

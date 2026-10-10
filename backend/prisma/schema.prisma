@@ -1,0 +1,352 @@
+// PredictDx database schema
+// AI Multimodal System for Early Detection and Future Risk Prediction of Chest Diseases
+// Air University Islamabad - FYP 2023-2027
+//
+// PostgreSQL. `npm run dev` starts the bundled PostgreSQL server (scripts/pg.mjs);
+// point DATABASE_URL at any other PostgreSQL (installed, Docker, cloud) to use that instead.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ================================================================ 7.1 Smart Entry Portal
+/// role: PATIENT | DOCTOR | ADMIN
+/// status: ACTIVE | PENDING (doctor awaiting licence check) | BLOCKED
+/// mfaMethod: EMAIL | TOTP
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  phone         String?
+  passwordHash  String
+  role          String    @default("PATIENT")
+  fullName      String
+  status        String    @default("ACTIVE")
+  emailVerified Boolean   @default(false)
+  mfaEnabled    Boolean   @default(true)
+  mfaMethod     String    @default("EMAIL")
+  totpSecret    String?
+  totpPending   String?
+  failedLogins  Int       @default(0)
+  lockedUntil   DateTime?
+  lastLoginAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  patient       Patient?
+  doctor        Doctor?
+  sessions      Session[]
+  otps          OtpCode[]
+  notifications Notification[]
+  memberships   ThreadMember[]
+  messages      Message[]
+  auditLogs     AuditLog[]
+}
+
+/// One row per signed-in device. The refresh token itself is never stored, only its hash.
+model Session {
+  id          String    @id @default(uuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  refreshHash String
+  userAgent   String?
+  ip          String?
+  expiresAt   DateTime
+  revokedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  lastUsedAt  DateTime  @default(now())
+
+  @@index([userId])
+}
+
+/// purpose: VERIFY_EMAIL | LOGIN_MFA | RESET_PASSWORD
+model OtpCode {
+  id         String    @id @default(uuid())
+  userId     String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  purpose    String
+  codeHash   String
+  attempts   Int       @default(0)
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([userId, purpose])
+}
+
+// ================================================================ 7.2 My Health Portal
+model Patient {
+  id          String    @id @default(uuid())
+  userId      String    @unique
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mrn         String    @unique
+  dateOfBirth DateTime?
+  gender      String?
+  city        String?
+  bloodGroup  String?
+  flags       String    @default("")
+  createdAt   DateTime  @default(now())
+
+  appointments  Appointment[]
+  prescriptions Prescription[]
+  records       Record[]
+  consultations Consultation[]
+  studies       XrayStudy[]
+}
+
+// ================================================================ 7.3 Doctor Workspace
+model Doctor {
+  id              String  @id @default(uuid())
+  userId          String  @unique
+  user            User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  specialization  String
+  pmdcNumber      String  @unique
+  qualification   String
+  hospital        String
+  city            String
+  fee             Int
+  experienceYears Int     @default(0)
+  rating          Float   @default(4.5)
+  reviews         Int     @default(0)
+  room            String  @default("Room 204")
+  bio             String?
+  /// JSON array of "HH:mm" slot start times offered each working day
+  slotTimes       String  @default("[\"10:00\",\"11:00\",\"16:30\",\"17:10\",\"18:00\"]")
+  /// comma-separated ISO weekdays (1 = Monday ... 7 = Sunday)
+  workDays        String  @default("1,2,3,4,5,6")
+  licenceFile     String?
+  /// the uploaded PMDC licence (PDF or image) stored in the database
+  licenceFileId   String?
+  verified        Boolean @default(false)
+  languages       String  @default("English, Urdu")
+  facilityId      String?
+  facility        Facility? @relation(fields: [facilityId], references: [id])
+
+  appointments  Appointment[]
+  prescriptions Prescription[]
+  consultations Consultation[]
+}
+
+/// Hospitals, clinics and diagnostic centres where doctors consult.
+/// type: HOSPITAL | CLINIC | DIAGNOSTIC_CENTRE ; sector: PUBLIC | PRIVATE
+model Facility {
+  id       String   @id @default(uuid())
+  name     String   @unique
+  type     String   @default("HOSPITAL")
+  sector   String   @default("PRIVATE")
+  city     String
+  area     String
+  address  String
+  lat      Float
+  lng      Float
+  services String   @default("")
+  doctors  Doctor[]
+}
+
+/// status: PENDING_PAYMENT | CONFIRMED | CHECKED_IN | IN_CONSULTATION | COMPLETED | CANCELLED
+model Appointment {
+  id        String   @id @default(uuid())
+  patientId String
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  doctorId  String
+  doctor    Doctor   @relation(fields: [doctorId], references: [id])
+  startAt   DateTime
+  status    String   @default("PENDING_PAYMENT")
+  reason    String?
+  /// "<doctorId>|<ISO start>" while the booking is active, NULL once cancelled.
+  /// The UNIQUE index is what actually prevents a double booking.
+  slotKey   String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  payment      Payment?
+  consultation Consultation?
+  prescription Prescription?
+
+  @@index([doctorId, startAt])
+  @@index([patientId, startAt])
+}
+
+/// status: PENDING | PAID | REFUNDED | FAILED
+model Payment {
+  id            String      @id @default(uuid())
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  amount        Int
+  currency      String      @default("PKR")
+  method        String?
+  status        String      @default("PENDING")
+  invoiceNo     String      @unique
+  txRef         String?
+  paidAt        DateTime?
+  createdAt     DateTime    @default(now())
+}
+
+model Consultation {
+  id            String      @id @default(uuid())
+  appointmentId String      @unique
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  doctorId      String
+  doctor        Doctor      @relation(fields: [doctorId], references: [id])
+  patientId     String
+  patient       Patient     @relation(fields: [patientId], references: [id])
+  /// JSON { bp, spo2, temp, weight }
+  vitals        String      @default("{}")
+  notes         String      @default("")
+  testOrder     String?
+  followUpAt    DateTime?
+  aiDisagree    Boolean     @default(false)
+  updatedAt     DateTime    @updatedAt
+}
+
+/// status: DRAFT | SIGNED
+model Prescription {
+  id            String       @id @default(uuid())
+  code          String       @unique
+  patientId     String
+  patient       Patient      @relation(fields: [patientId], references: [id])
+  doctorId      String
+  doctor        Doctor       @relation(fields: [doctorId], references: [id])
+  appointmentId String?      @unique
+  appointment   Appointment? @relation(fields: [appointmentId], references: [id])
+  /// JSON array of { name, dose, frequency }
+  items         String       @default("[]")
+  status        String       @default("DRAFT")
+  signedAt      DateTime?
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+// ================================================================ 7.4 Smart Diagnosis Center (in progress)
+/// status: UPLOADED | ANALYSING | ANALYSED | FAILED
+model XrayStudy {
+  id           String   @id @default(uuid())
+  code         String   @unique
+  patientId    String
+  patient      Patient  @relation(fields: [patientId], references: [id])
+  uploadedById String
+  /// the image itself, stored in PostgreSQL (StoredFile). filePath is kept for older disk uploads.
+  fileId       String?      @unique
+  file         StoredFile?  @relation(fields: [fileId], references: [id])
+  filePath     String?
+  originalName String
+  mimeType     String
+  sizeBytes    Int
+  sha256       String?
+  view         String   @default("PA")
+  status       String   @default("UPLOADED")
+  /// JSON result from the AI service (probabilities, regions, risk)
+  result       String?
+  modelVersion String?
+  /// Ground truth for AI training, confirmed by a doctor: NORMAL | PNEUMONIA | TUBERCULOSIS | OTHER
+  verifiedLabel String?
+  verifiedById  String?
+  verifiedAt    DateTime?
+  /// whether this study may be used (de-identified) to train the model
+  trainingUse   Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@index([verifiedLabel])
+}
+
+/// Binary files kept inside PostgreSQL: chest X-rays, doctor licences, attachments.
+/// kind: XRAY | LICENCE | ATTACHMENT
+model StoredFile {
+  id           String     @id @default(uuid())
+  kind         String
+  fileName     String
+  mimeType     String
+  sizeBytes    Int
+  sha256       String
+  data         Bytes
+  uploadedById String?
+  createdAt    DateTime   @default(now())
+  study        XrayStudy?
+
+  @@index([kind, sha256])
+}
+
+// ================================================================ 7.5 Reports & Care Records
+/// kind: Prescription | AI report | Radiology | Lab | Note | Imaging
+model Record {
+  id        String   @id @default(uuid())
+  patientId String
+  patient   Patient  @relation(fields: [patientId], references: [id])
+  kind      String
+  title     String
+  source    String
+  body      String   @default("")
+  version   Int      @default(1)
+  signed    Boolean  @default(true)
+  refId     String?
+  createdAt DateTime @default(now())
+}
+
+// ================================================================ 7.6 CareConnect Hub
+/// kind: DIRECT (patient <-> doctor) | BOT (patient <-> CareBot)
+model Thread {
+  id            String         @id @default(uuid())
+  kind          String         @default("DIRECT")
+  lastMessageAt DateTime       @default(now())
+  createdAt     DateTime       @default(now())
+  members       ThreadMember[]
+  messages      Message[]
+}
+
+model ThreadMember {
+  id         String   @id @default(uuid())
+  threadId   String
+  thread     Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lastReadAt DateTime @default(now())
+
+  @@unique([threadId, userId])
+  @@index([userId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  threadId  String
+  thread    Thread   @relation(fields: [threadId], references: [id], onDelete: Cascade)
+  senderId  String?
+  sender    User?    @relation(fields: [senderId], references: [id])
+  isBot     Boolean  @default(false)
+  body      String
+  createdAt DateTime @default(now())
+
+  @@index([threadId, createdAt])
+}
+
+model Notification {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  title     String
+  body      String
+  link      String?
+  readAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([userId, createdAt])
+}
+
+// ================================================================ 7.8 / 7.9 Admin & Central Records
+model AuditLog {
+  id        String   @id @default(uuid())
+  actorId   String?
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+  action    String
+  entity    String?
+  entityId  String?
+  detail    String?
+  ip        String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

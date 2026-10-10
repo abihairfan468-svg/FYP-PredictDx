@@ -1,0 +1,198 @@
+/* Auth screens — PredictDX Screens PDF: photo panel left, white card on a
+   grey-blue page right, blue tagline strip underneath. */
+
+.au {
+  min-height: 100vh;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  color: var(--ink);
+}
+
+.au-top {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  align-items: start;
+}
+
+/* Left panel: the lungs artwork, shown as-is. It stays one screen tall and
+   pinned while a longer form (create account) scrolls beside it. */
+.au-art {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  background: #0b2a55;
+  min-height: 420px;
+  display: flex;
+  align-items: flex-start;
+  text-decoration: none;
+}
+
+.au-art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.au-art-copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 108px 60px 48px;
+  color: #fff;
+  max-width: 460px;
+}
+
+.au-word {
+  font-family: var(--font-d);
+  font-size: clamp(40px, 5vw, 64px);
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
+}
+
+.au-art-copy p {
+  font-size: 18px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.92);
+  margin: 0;
+}
+
+/* Right panel: white card on the page background */
+.au-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 48px clamp(20px, 5vw, 64px);
+  background: var(--bg);
+}
+
+.au-card {
+  width: min(520px, 100%);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 40px;
+}
+
+.au-card .eyebrow { font-size: 12.5px; letter-spacing: 0.1em; }
+
+/* Sign in / Create account segmented control */
+.tabs.au-mode {
+  display: flex;
+  width: 100%;
+  margin-top: 16px;
+}
+.tabs.au-mode button { flex: 1; padding: 9px 12px; font-size: 15px; }
+
+/* Role selection */
+.au-roles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.au-role {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 14px 12px;
+  border-radius: 6px;
+  border: 1px solid var(--line);
+  background: #fff;
+  color: var(--ink-2);
+  text-align: left;
+  transition: border-color 0.15s, background 0.15s;
+}
+.au-role:hover:not(:disabled) { border-color: var(--brand-ring); }
+.au-role.on { border-color: var(--brand); background: var(--sky); color: var(--navy-2); }
+.au-role b { color: var(--ink); font-size: 15px; font-weight: 700; }
+.au-role small { font-size: 12.5px; line-height: 1.35; color: var(--muted); }
+.au-role.on small { color: var(--navy-2); }
+.au-role:disabled { opacity: 0.5; }
+
+.au-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.au-3 { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 14px; }
+
+/* OTP / verification steps */
+.au-h {
+  font-family: var(--font-d);
+  font-size: 28px;
+  font-weight: 800;
+  margin: 0;
+  color: var(--ink);
+}
+.au .h-sub { font-size: 14.5px; line-height: 1.55; color: var(--ink-2); }
+
+.au-otp-ic {
+  width: 54px;
+  height: 54px;
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  background: var(--sky);
+  color: var(--brand);
+}
+.au-otp-ic.ok { background: var(--ok-soft); color: var(--ok); }
+
+/* Tagline strip */
+.au-bottom {
+  background: var(--bg);
+  padding: 22px 16px 30px;
+  text-align: center;
+}
+.au-rule {
+  height: 3px;
+  width: 48px;
+  border-radius: 2px;
+  background: var(--brand);
+  margin: 0 auto 16px;
+}
+.au-tag {
+  font-family: var(--font-d);
+  font-size: clamp(20px, 2.2vw, 24px);
+  font-weight: 800;
+  color: var(--sky-ink);
+  margin: 0;
+}
+
+/* Shared Input / Button components as used on the auth card */
+.au .form-group { display: flex; flex-direction: column; gap: 6px; }
+.au .form-label { font-size: 14px; font-weight: 700; color: var(--ink); }
+.au .input-field { font-size: 15px; padding: 11px 13px; border-color: #cfd9e4; border-radius: 6px; background: #fff; }
+.au .input-with-icon .input-field { padding-left: 40px; }
+.au select.inp { height: 47px; padding: 0 12px !important; color: var(--ink); background: #fff; border-color: #cfd9e4; border-radius: 6px; font-size: 15px; }
+.au .btn { border-radius: 6px; font-size: 15.5px; font-weight: 700; padding: 12px 20px; }
+.au .form-check { display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; color: var(--ink-2); }
+
+@media (max-width: 1024px) {
+  .au-top { grid-template-columns: 1fr; }
+  .au-art { position: relative; height: auto; min-height: 240px; }
+  .au-right { min-height: 0; }
+  .au-art-copy { padding: 40px 32px; }
+}
+
+@media (max-width: 640px) {
+  .au-art { min-height: 190px; }
+  .au-art-copy { padding: 28px 20px; gap: 10px; }
+  .au-word { font-size: 36px; }
+  .au-art-copy p { font-size: 15px; }
+  .au-right { padding: 20px 14px; }
+  .au-card { padding: 24px 18px; }
+  .au-2, .au-3 { grid-template-columns: 1fr; }
+  .au-roles { grid-template-columns: 1fr; }
+  .au-role { flex-direction: row; align-items: center; gap: 10px; }
+  .au-h { font-size: 24px; }
+}
