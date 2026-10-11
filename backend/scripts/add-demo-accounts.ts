@@ -2,18 +2,14 @@
  * Adds the extra demo patients and doctors (prisma/data/demo-accounts.ts) to an EXISTING database.
  * Nothing is deleted; accounts that already exist are skipped.
  *   npm --prefix backend run accounts:add
- * Set DEMO_GMAIL=yourname@gmail.com in backend/.env first so their sign-in codes reach your Gmail.
+ * Addresses are first.last@predictdx.com; their sign-in codes appear in the API terminal.
  */
-import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import { DEMO_DOCTORS, DEMO_PATIENTS, demoEmail, upsertDemoAccounts } from '../prisma/data/demo-accounts';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  if (!process.env.DEMO_GMAIL) {
-    console.log('DEMO_GMAIL is not set in backend/.env - using @predictdx.com addresses (codes only in the API console).');
-  }
   const added = await upsertDemoAccounts(prisma);
   console.log(`Added ${added} new account(s).\n`);
   console.log('Role     | Name                 | E-mail                                        | Password');

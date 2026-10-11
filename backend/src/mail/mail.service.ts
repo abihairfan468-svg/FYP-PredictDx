@@ -32,7 +32,11 @@ export class MailService {
 
   /** `html` is optional: without it the text is laid out in the standard PredictDx template. */
   async send(to: string, subject: string, text: string, html?: string) {
-    if (!this.transporter) {
+    // Demo accounts use addresses on domains we do not own (predictdx.com belongs to someone else):
+    // never deliver to them, so a demo sign-in can never e-mail a stranger. Codes stay in this terminal.
+    const domain = to.split('@')[1]?.toLowerCase() ?? '';
+    const demoDomains = (process.env.MAIL_DEMO_DOMAINS ?? 'predictdx.com').split(',').map((d) => d.trim().toLowerCase());
+    if (!this.transporter || demoDomains.includes(domain)) {
       this.log.log(`e-mail to ${to} | ${subject} | ${text.replace(/\n/g, ' ')}`);
       return;
     }

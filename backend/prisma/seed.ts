@@ -151,7 +151,7 @@ async function main() {
   await prisma.user.create({
     data: { ...(await account('kamran.shah@predictdx.com')), fullName: 'Kamran Shah', role: 'PATIENT', status: 'BLOCKED', patient: { create: { mrn: 'PDX-10999', city: 'Karachi' } } },
   });
-  // Extra patients and doctors whose codes reach a real inbox (DEMO_GMAIL in backend/.env)
+  // Extra demo patients and doctors (first.last@predictdx.com; codes appear in the API terminal)
   await upsertDemoAccounts(prisma);
 
   // Ayesha's history: a completed visit and signed records.

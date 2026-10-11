@@ -13,6 +13,8 @@ export const REAL_EMAILS: [string, string, string][] = [
   ['ayesha.khan@predictdx.com', 'abihairfan454@gmail.com', 'Patient Ayesha Khan'],
   ['a.rehman@predictdx.com', 'abihairfan468@gmail.com', 'Doctor Dr Adeel Rehman'],
   ['admin@predictdx.com', '230897@students.au.edu.pk', 'Admin Sana Ahmed'],
+  ['hina.javed@predictdx.com', 'abihairfan721@gmail.com', 'Doctor Dr Hina Javed'],
+  ['nimra.shah@predictdx.com', '230941@students.au.edu.pk', 'Patient Nimra Shah'],
 ];
 
 async function main() {

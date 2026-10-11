@@ -24,7 +24,8 @@
     "accounts:add": "node scripts/with-postgres.mjs npx ts-node scripts/add-demo-accounts.ts",
     "today": "node scripts/with-postgres.mjs npx ts-node scripts/refresh-today.ts",
     "accounts:real-emails": "node scripts/with-postgres.mjs npx ts-node scripts/use-real-emails.ts",
-    "showcase:add": "node scripts/with-postgres.mjs npx ts-node scripts/add-showcase-data.ts"
+    "showcase:add": "node scripts/with-postgres.mjs npx ts-node scripts/add-showcase-data.ts",
+    "accounts:standard-emails": "node scripts/with-postgres.mjs npx ts-node scripts/standard-emails.ts"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

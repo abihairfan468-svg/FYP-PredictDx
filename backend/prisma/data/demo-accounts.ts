@@ -1,10 +1,7 @@
 /**
- * Extra demo accounts whose sign-in codes reach a REAL inbox.
- *
- * Gmail delivers name+anything@gmail.com to name@gmail.com, so with DEMO_GMAIL set in backend/.env
- * (e.g. DEMO_GMAIL=yourname@gmail.com) each person below logs in as yourname+sara.ahmed@gmail.com and
- * every verification / sign-in code is really e-mailed to that one inbox. The address lives only in .env,
- * never in the code. Without DEMO_GMAIL they fall back to name@predictdx.com (codes in the API console).
+ * Extra demo patients and doctors with standard addresses (first.last@predictdx.com).
+ * predictdx.com is not our domain, so MailService never e-mails these addresses: their sign-in
+ * codes appear in the API terminal. Real-inbox accounts are set by scripts/use-real-emails.ts.
  *
  * People are fictional; hospitals are the real facilities from data/pakistan.ts.
  *   npm --prefix backend run accounts:add     (adds them to an existing database, deletes nothing)
@@ -14,9 +11,7 @@ import * as argon2 from 'argon2';
 import { slotsFor } from './pakistan';
 
 export function demoEmail(local: string): string {
-  const inbox = process.env.DEMO_GMAIL?.trim().toLowerCase() ?? '';
-  const m = inbox.match(/^([^@+\s]+)@(gmail\.com|googlemail\.com)$/);
-  return m ? `${m[1]}+${local}@${m[2]}` : `${local}@predictdx.com`;
+  return `${local.replace(/^dr\./, '')}@predictdx.com`;
 }
 
 export interface DemoPatient {
@@ -32,7 +27,7 @@ export const DEMO_PATIENTS: DemoPatient[] = [
   { name: 'Zainab Hussain', local: 'zainab.hussain', password: 'Zainab@Hussain26', mrn: 'PDX-11005', dob: '1992-12-08', gender: 'FEMALE', city: 'Islamabad', phone: '+92 345 5307712', bloodGroup: 'AB+', flags: 'TB contact' },
   { name: 'Ahmed Raza', local: 'ahmed.raza', password: 'Ahmed@Raza26', mrn: 'PDX-11006', dob: '1958-04-17', gender: 'MALE', city: 'Lahore', phone: '+92 300 4471925', bloodGroup: 'O-', flags: 'COPD,Ex-smoker' },
   { name: 'Fatima Noor', local: 'fatima.noor', password: 'Fatima@Noor26', mrn: 'PDX-11007', dob: '2014-09-03', gender: 'FEMALE', city: 'Rawalpindi', phone: '+92 312 5096648', bloodGroup: 'A-', flags: 'Child (guardian account)' },
-  { name: 'Bilal Chaudhry', local: 'bilal.chaudhry', password: 'Bilal@Chaudhry26', mrn: 'PDX-11008', dob: '1985-01-26', gender: 'MALE', city: 'Karachi', phone: '+92 331 2675510', bloodGroup: 'B+', flags: 'Penicillin allergy' },
+  { name: 'Bilal Chaudhry', local: 'bilalchaudhry', password: 'Bilal@Chaudhry26', mrn: 'PDX-11008', dob: '1985-01-26', gender: 'MALE', city: 'Karachi', phone: '+92 331 2675510', bloodGroup: 'B+', flags: 'Penicillin allergy' },
   { name: 'Ayesha Tariq', local: 'ayesha.tariq', password: 'Ayesha@Tariq26', mrn: 'PDX-11009', dob: '1979-06-11', gender: 'FEMALE', city: 'Islamabad', phone: '+92 300 8542207', bloodGroup: 'O+', flags: 'Pregnant (2nd trimester)' },
   { name: 'Usama Sheikh', local: 'usama.sheikh', password: 'Usama@Sheikh26', mrn: 'PDX-11010', dob: '1999-10-19', gender: 'MALE', city: 'Lahore', phone: '+92 322 4380951', bloodGroup: 'A+', flags: 'Previous TB (treated 2022)' },
 ];

@@ -4,18 +4,17 @@
  * every extra demo patient. Nothing is deleted; running it twice adds nothing new.
  *   npm --prefix backend run showcase:add
  * People are fictional; hospitals are the real facilities from prisma/data/pakistan.ts.
- * Sign-in codes go to real inboxes: doctors abihairfan721+dr.name@gmail.com, patients
- * 230897+name@students.au.edu.pk. Passwords follow First@Last26.
+ * Addresses are first.last@predictdx.com (codes in the API terminal); Dr Hina Javed and Nimra Shah
+ * use real team inboxes. Passwords follow First@Last26.
  */
 import 'dotenv/config';
 import { PrismaClient } from '@prisma/client';
 import * as argon2 from 'argon2';
 import { randomBytes } from 'crypto';
 import { slotsFor } from '../prisma/data/pakistan';
-/** Real inboxes for the new accounts: both providers deliver name+anything@ to name@. */
-const DOCTOR_INBOX = 'abihairfan721@gmail.com';
-const PATIENT_INBOX = '230897@students.au.edu.pk';
-const inbox = (base: string, local: string) => { const [u, dom] = base.split('@'); return `${u}+${local}@${dom}`; };
+/** Standard addresses; two showcase people use real team inboxes so their codes really arrive. */
+const REAL_INBOX: Record<string, string> = { 'dr.hina.javed': 'abihairfan721@gmail.com', 'nimra.shah': '230941@students.au.edu.pk' };
+const inbox = (local: string) => REAL_INBOX[local] ?? `${local.replace(/^dr\./, '')}@predictdx.com`;
 import { FORMULARY } from '../src/workspace/medicines';
 
 const prisma = new PrismaClient();
@@ -104,7 +103,7 @@ async function main() {
   const created: string[] = [];
 
   for (const d of NEW_DOCTORS) {
-    const email = inbox(DOCTOR_INBOX, d.local);
+    const email = inbox(d.local);
     if (await prisma.user.findUnique({ where: { email } })) continue;
     const f = await prisma.facility.findFirst({ where: { name: d.facility } });
     await prisma.user.create({
@@ -120,7 +119,7 @@ async function main() {
     created.push(`Doctor   | ${d.name.padEnd(17)} | ${email.padEnd(44)} | ${d.password}`);
   }
   for (const p of NEW_PATIENTS) {
-    const email = inbox(PATIENT_INBOX, p.local);
+    const email = inbox(p.local);
     if (await prisma.user.findUnique({ where: { email } })) continue;
     const [first, last] = p.name.split(' ');
     const password = `${first}@${last}26`;
