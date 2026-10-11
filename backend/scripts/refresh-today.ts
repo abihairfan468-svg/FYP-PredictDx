@@ -3,29 +3,32 @@
  * and Ayesha's "Next visit" are current on the day you present. Nothing is deleted, uploaded
  * X-rays and everything else stay as they are.
  *   npm --prefix backend run today
+ * In the cloud it runs on every start (start:cloud), so a Redeploy on presentation day is enough.
+ * Times are Pakistan time (UTC+5) whatever time zone the server is in.
  */
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
-const DOCTOR = 'a.rehman@predictdx.com';
+// Accounts may carry their original demo address or the real inbox (scripts/use-real-emails.ts).
+const DOCTOR = ['a.rehman@predictdx.com', 'abihairfan468@gmail.com'];
 const VISITS = [
-  { email: 'ayesha.khan@predictdx.com', reason: 'Follow-up', time: '16:30', status: 'CONFIRMED' },
+  { email: ['ayesha.khan@predictdx.com', 'abihairfan454@gmail.com'], reason: 'Follow-up', time: '16:30', status: 'CONFIRMED' },
   { email: 'bilal.raza@predictdx.com', reason: 'New patient', time: '17:10', status: 'CHECKED_IN' },
   { email: 'hira.saleem@predictdx.com', reason: 'Report review', time: '17:50', status: 'CONFIRMED' },
   { email: 'usman.tariq@predictdx.com', reason: 'TB follow-up', time: '18:30', status: 'CONFIRMED' },
 ];
 
 async function main() {
-  const doctor = await prisma.doctor.findFirst({ where: { user: { email: DOCTOR } } });
+  const doctor = await prisma.doctor.findFirst({ where: { user: { email: { in: DOCTOR } } } });
   if (!doctor) throw new Error(`${DOCTOR} not found - run "npm --prefix backend run accounts:update" first`);
-  const now = new Date();
+  const pk = new Date(Date.now() + 5 * 3600_000); // Pakistan calendar date
   let moved = 0;
   for (const v of VISITS) {
     const [h, m] = v.time.split(':').map(Number);
-    const startAt = new Date(now.getFullYear(), now.getMonth(), now.getDate(), h, m);
+    const startAt = new Date(Date.UTC(pk.getUTCFullYear(), pk.getUTCMonth(), pk.getUTCDate(), h - 5, m));
     const slotKey = `${doctor.id}|${startAt.toISOString()}`;
     const appt = await prisma.appointment.findFirst({
-      where: { doctorId: doctor.id, reason: v.reason, patient: { user: { email: v.email } } },
+      where: { doctorId: doctor.id, reason: v.reason, patient: { user: { email: { in: [v.email].flat() } } } },
       orderBy: { startAt: 'desc' },
     });
     if (!appt) continue;
@@ -37,7 +40,7 @@ async function main() {
     await prisma.appointment.update({ where: { id: appt.id }, data: { startAt, slotKey, status: v.status } });
     moved++;
   }
-  console.log(`${moved} sample visits are now today (${now.toDateString()}) with Dr Adeel Rehman`);
+  console.log(`${moved} sample visits are now today (${pk.toISOString().slice(0, 10)}) with Dr Adeel Rehman`);
 }
 
 main()
