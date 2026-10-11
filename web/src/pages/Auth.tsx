@@ -36,7 +36,8 @@ export default function Auth() {
   const toast = useToast();
   const showCode = useDevCode();
 
-  const [step, setStep] = useState<Step>(loc.hash === '#signup' ? 'signup' : 'signin');
+  const wantsSignup = loc.hash === '#signup' || new URLSearchParams(loc.search).has('signup');
+  const [step, setStep] = useState<Step>(wantsSignup ? 'signup' : 'signin');
   const [role, setRole] = useState<Role>('PATIENT');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -69,6 +70,10 @@ export default function Auth() {
     setFieldErr({});
     setStep(s);
   };
+  const toSignup = () => { go('signup'); if (role === 'ADMIN') setRole('PATIENT'); };
+
+  // Landing page buttons can be clicked again while this page is open.
+  useEffect(() => { setStep(wantsSignup ? 'signup' : 'signin'); }, [wantsSignup]);
 
   const finish = (r: LoginResult) => {
     if (r.status === 'OK') {
@@ -208,10 +213,7 @@ export default function Auth() {
 
             {(step === 'signin' || step === 'signup') && (
               <>
-                <div className="tabs au-mode" role="tablist">
-                  <button className={step === 'signin' ? 'on' : ''} onClick={() => go('signin')} role="tab" aria-selected={step === 'signin'}>Sign in</button>
-                  <button className={step === 'signup' ? 'on' : ''} onClick={() => { go('signup'); if (role === 'ADMIN') setRole('PATIENT'); }} role="tab" aria-selected={step === 'signup'}>Create account</button>
-                </div>
+                <h2 className="au-h" style={{ marginTop: 16 }}>{step === 'signin' ? 'Sign in' : 'Create account'}</h2>
                 <div className="eyebrow" style={{ margin: '16px 0 8px' }}>I am a</div>
                 <div className="au-roles">
                   {ROLES.map(([k, t, d, i]) => {
@@ -269,6 +271,9 @@ export default function Auth() {
                 >
                   Sign in as {ROLES.find((r) => r[0] === role)![1].toLowerCase()}
                 </Button>
+                <p className="au-switch">
+                  New to PredictDx? <button type="button" className="btn-link" onClick={toSignup}>Create an account</button>
+                </p>
               </form>
             )}
 
@@ -432,6 +437,9 @@ export default function Auth() {
                 >
                   Create {role === 'DOCTOR' ? 'doctor' : 'patient'} account
                 </Button>
+                <p className="au-switch">
+                  Already have an account? <button type="button" className="btn-link" onClick={() => go('signin')}>Sign in</button>
+                </p>
               </form>
             )}
 
