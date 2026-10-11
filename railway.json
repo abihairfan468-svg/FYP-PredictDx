@@ -1,0 +1,12 @@
+{
+  "$schema": "https://railway.com/railway.schema.json",
+  "build": {
+    "buildCommand": "npm ci --include=dev --prefix backend && npm ci --include=dev --prefix web && npm --prefix web run build && cd backend && npx prisma generate && npm run build"
+  },
+  "deploy": {
+    "startCommand": "npm --prefix backend run start:cloud",
+    "healthcheckPath": "/api/v1/health",
+    "healthcheckTimeout": 300,
+    "restartPolicyType": "ON_FAILURE"
+  }
+}

@@ -1,0 +1,38 @@
+# Render Blueprint: the PredictDx website + API as one free web service.
+# The database (Neon) and the AI service (Hugging Face Space) are separate free services;
+# their addresses and all secrets are entered in the Render dashboard, never in this file.
+services:
+  - type: web
+    name: predictdx
+    runtime: node
+    plan: free
+    buildCommand: >-
+      npm ci --include=dev --prefix backend &&
+      npm ci --include=dev --prefix web &&
+      npm --prefix web run build &&
+      cd backend && npx prisma generate && npm run build
+    startCommand: npm --prefix backend run start:cloud
+    healthCheckPath: /api/v1/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: USE_EMBEDDED_POSTGRES
+        value: "false"
+      - key: DATABASE_URL
+        sync: false
+      - key: JWT_ACCESS_SECRET
+        generateValue: true
+      - key: JWT_MFA_SECRET
+        generateValue: true
+      - key: OTP_PEPPER
+        generateValue: true
+      - key: AI_SERVICE_URL
+        sync: false
+      - key: AI_INTERNAL_KEY
+        sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      - key: MAIL_FROM
+        value: PredictDx <abihairfan468@gmail.com>

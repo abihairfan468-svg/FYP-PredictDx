@@ -25,7 +25,9 @@
     "today": "node scripts/with-postgres.mjs npx ts-node scripts/refresh-today.ts",
     "accounts:real-emails": "node scripts/with-postgres.mjs npx ts-node scripts/use-real-emails.ts",
     "showcase:add": "node scripts/with-postgres.mjs npx ts-node scripts/add-showcase-data.ts",
-    "accounts:standard-emails": "node scripts/with-postgres.mjs npx ts-node scripts/standard-emails.ts"
+    "accounts:standard-emails": "node scripts/with-postgres.mjs npx ts-node scripts/standard-emails.ts",
+    "start:cloud": "npx prisma db push --skip-generate && node dist/main",
+    "cloud:seed": "npx prisma db push --skip-generate && npx ts-node prisma/seed.ts && npx ts-node scripts/use-real-emails.ts && npx ts-node scripts/add-showcase-data.ts"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

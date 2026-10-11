@@ -8,6 +8,9 @@ const LOCAL_NETWORK = /^https?:\/\/(localhost|127\.0\.0\.1|10(\.\d{1,3}){3}|172\
 export function isAllowedOrigin(origin: string | undefined): boolean {
   if (!origin) return true; // native apps and server-to-server calls send no Origin
   const listed = (process.env.WEB_ORIGIN ?? 'http://localhost:5173').split(',').map((o) => o.trim());
+  // In the cloud the site is served from the service's own public address, which the host provides.
+  if (process.env.RENDER_EXTERNAL_URL) listed.push(process.env.RENDER_EXTERNAL_URL.replace(/\/$/, ''));
+  if (process.env.RAILWAY_PUBLIC_DOMAIN) listed.push(`https://${process.env.RAILWAY_PUBLIC_DOMAIN}`);
   if (listed.includes(origin)) return true;
   return process.env.NODE_ENV !== 'production' && LOCAL_NETWORK.test(origin);
 }
