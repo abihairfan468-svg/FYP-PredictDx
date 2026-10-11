@@ -40,6 +40,22 @@ class HealthController {
       },
     };
   }
+
+  /** Can the API reach the Python AI service? Shows the host it tries and the error, if any. */
+  @Public()
+  @Get('ai')
+  async ai() {
+    const url = process.env.AI_SERVICE_URL ?? 'http://localhost:8000';
+    let host = url;
+    try { host = new URL(url).host; } catch { /* keep the raw value */ }
+    try {
+      const res = await fetch(`${url}/health`, { signal: AbortSignal.timeout(10_000) });
+      return { reachable: res.ok, host, status: res.status, ai: await res.json().catch(() => null) };
+    } catch (e) {
+      const err = e as Error & { cause?: { code?: string; message?: string } };
+      return { reachable: false, host, error: err.cause?.code ?? err.cause?.message ?? err.message };
+    }
+  }
 }
 
 @Module({

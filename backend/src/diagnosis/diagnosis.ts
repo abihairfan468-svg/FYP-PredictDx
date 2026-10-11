@@ -294,7 +294,9 @@ export class DiagnosisController implements OnModuleInit {
         signal: AbortSignal.timeout(AI_TIMEOUT_MS),
       });
     } catch {
-      throw new AiUnavailable('The AI service is not running. Start it with npm run dev (it takes about 20 seconds to load the model).');
+      throw new AiUnavailable(process.env.NODE_ENV === 'production'
+        ? 'The AI service is not reachable right now. Please try again in a minute.'
+        : 'The AI service is not running. Start it with npm run dev (it takes about 20 seconds to load the model).');
     }
     if (!res.ok) {
       const detail = await res.json().catch(() => ({}));
