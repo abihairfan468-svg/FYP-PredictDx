@@ -167,20 +167,20 @@ export default function Portal() {
           <div className="list">
             {docs.loading && !docs.data && [0, 1, 2].map((i) => <div key={i}><div className="skeleton" style={{ height: 48 }} /></div>)}
             {docs.data?.results.map((d) => (
-              <div key={d.id} className="ctr wrap" style={{ gap: 13 }}>
+              <div key={d.id} className="doc-card">
                 <Avatar name={d.name} size={46} cls={d.specialization === 'Radiology' ? 'c2' : ''} />
-                <div className="grow" style={{ minWidth: 160 }}>
+                <div style={{ minWidth: 0 }}>
                   <div className="ctr" style={{ gap: 7, fontSize: 14, fontWeight: 700 }}>{d.name}{d.online && <span className="chip ok" style={{ fontSize: 9.5, padding: '2px 7px' }}><span className="dot" style={{ background: 'var(--ok)', width: 6, height: 6 }} /> Online</span>}</div>
                   <div className="tiny" style={{ color: 'var(--ink-2)' }}>{d.specialization} · {d.qualification} · {d.experienceYears} yrs</div>
                   <div className="tiny">{d.facility ? `${d.facility.name} · ${d.facility.area}, ${d.city}` : `${d.hospital} · ${d.city}`}</div>
                   <div className="tiny" style={{ marginTop: 2 }}><Icon n="clock" s={11} /> {d.schedule}{d.distanceKm != null && <> · <b style={{ color: 'var(--brand)' }}>{km(d.distanceKm)}</b> away</>}</div>
                 </div>
-                <div style={{ textAlign: 'right' }}>
+                <div className="doc-card-price">
                   <div style={{ fontSize: 12, fontWeight: 700 }}>★ {d.rating} <span className="tiny">({d.reviews})</span></div>
                   <div className="num" style={{ fontSize: 13, fontWeight: 700, marginTop: 3 }}>{d.fee ? rs(d.fee) : 'Free'}</div>
                   <div className="tiny">{d.freeSlotsThisWeek} slots this week</div>
                 </div>
-                <div className="col" style={{ gap: 7, alignItems: 'flex-end', width: 150 }}>
+                <div className="col doc-card-actions" style={{ gap: 7 }}>
                   <span className={`chip ${d.availableToday ? 'ok' : ''}`}>{d.nextSlot ? `${d.nextSlot.day} ${d.nextSlot.label}` : 'Fully booked'}</span>
                   <button className="btn btn-p sm" disabled={!d.nextSlot} onClick={() => setBooking({ doctor: d })}>Book slot</button>
                   {d.facility && <a className="btn btn-g xs" href={mapsUrl(d.facility)} target="_blank" rel="noreferrer" title={`Directions to ${d.facility.name} in Google Maps`}><Icon n="send" s={12} /> Directions</a>}
