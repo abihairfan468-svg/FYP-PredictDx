@@ -32,6 +32,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../common/audit.service';
 import { MailService } from '../mail/mail.service';
+import { greeting } from '../mail/templates';
 import { NotificationsService } from '../notifications/notifications';
 import { RealtimeGateway } from '../realtime/realtime.gateway';
 import { AuthUser, CurrentUser, Roles } from '../common/decorators';
@@ -297,7 +298,7 @@ export class WorkspaceService {
     ]);
     await this.audit.log(me.id, 'prescription.signed', { entity: 'Prescription', entityId: rx.id, detail: `${rx.code} for ${a.patient.user.fullName}` });
     await this.notifications.notify(a.patient.user.id, 'prescription.signed', 'New prescription', `${doctor.user.fullName} signed ${rx.code} · ${items.length} medicine${items.length === 1 ? '' : 's'}`, '/app/records');
-    void this.mail.send(a.patient.user.email, `Your prescription ${rx.code}`, `${doctor.user.fullName} has sent you a prescription:\n\n${lines.join('\n')}\n\nYou can also find it in Reports & Care Records.`);
+    void this.mail.send(a.patient.user.email, `Your prescription ${rx.code}`, `${greeting(a.patient.user.fullName)}\n${doctor.user.fullName} has sent you a prescription:\n${lines.join('\n')}\nYou can also find it in Reports & Care Records.`);
 
     return { code: rx.code, status: 'SIGNED', signedAt, warnings };
   }

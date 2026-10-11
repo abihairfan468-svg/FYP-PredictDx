@@ -21,6 +21,7 @@ import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../common/audit.service';
 import { MailService } from '../mail/mail.service';
+import { greeting } from '../mail/templates';
 import { NotificationsService } from '../notifications/notifications';
 import { RealtimeGateway } from '../realtime/realtime.gateway';
 import { AuthUser, CurrentUser, Public, Roles } from '../common/decorators';
@@ -324,7 +325,7 @@ export class AppointmentsService {
     void this.mail.send(
       me.email,
       'Your PredictDx appointment is confirmed',
-      `Your appointment with ${paid.doctor.user.fullName} (${paid.doctor.specialization}) is confirmed for ${when} at ${paid.doctor.hospital}, ${paid.doctor.room}.\nInvoice ${paid.payment!.invoiceNo} · Rs ${paid.payment!.amount} paid by ${method}.`,
+      `${greeting(paid.patient.user.fullName)}\nYour appointment with ${paid.doctor.user.fullName} (${paid.doctor.specialization}) is confirmed for ${when} at ${paid.doctor.hospital}, ${paid.doctor.room}.\nInvoice ${paid.payment!.invoiceNo} · Rs ${paid.payment!.amount} paid by ${method}.\nYou can reschedule or cancel from My Health Portal.`,
     );
     return this.broadcast(paid);
   }

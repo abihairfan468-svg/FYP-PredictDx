@@ -1,5 +1,6 @@
 import { Global, Injectable, Logger, Module } from '@nestjs/common';
 import nodemailer, { Transporter } from 'nodemailer';
+import { noticeEmail } from './templates';
 
 /**
  * Sends transactional e-mail (OTP codes, booking confirmations).
@@ -29,22 +30,19 @@ export class MailService {
     }
   }
 
-  async send(to: string, subject: string, text: string) {
+  /** `html` is optional: without it the text is laid out in the standard PredictDx template. */
+  async send(to: string, subject: string, text: string, html?: string) {
     if (!this.transporter) {
       this.log.log(`e-mail to ${to} | ${subject} | ${text.replace(/\n/g, ' ')}`);
       return;
     }
-    const safe = text.replace(/&/g, '&amp;').replace(/</g, '&lt;');
     try {
       await this.transporter.sendMail({
         from: process.env.MAIL_FROM ?? 'PredictDx <no-reply@predictdx.com>',
         to,
         subject,
         text,
-        html: `<div style="font-family:Arial,sans-serif;background:#1E1D2B;color:#DCEBFF;padding:28px;border-radius:12px">
-          <h2 style="color:#A9DBFF;letter-spacing:.06em;margin:0 0 14px">PREDICTDX</h2>
-          <p style="white-space:pre-line;line-height:1.6;margin:0">${safe}</p>
-          <p style="color:#7E8BA8;font-size:12px;margin-top:22px">Predict disease &middot; save lives</p></div>`,
+        html: html ?? noticeEmail(subject, text),
       });
       this.log.log(`e-mail sent to ${to} | ${subject}`);
     } catch (e) {

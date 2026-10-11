@@ -2,18 +2,13 @@ import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nes
 import { PrismaService } from '../prisma/prisma.service';
 import { MailService } from '../mail/mail.service';
 import { sha256, sixDigitCode } from '../common/util';
+import { codeEmail } from '../mail/templates';
 
 export type OtpPurpose = 'VERIFY_EMAIL' | 'LOGIN_MFA' | 'RESET_PASSWORD';
 
 const TTL_MS = 5 * 60_000;
 const RESEND_COOLDOWN_MS = Number(process.env.OTP_RESEND_COOLDOWN_SECONDS ?? 30) * 1000;
 const MAX_ATTEMPTS = 5;
-
-const COPY: Record<OtpPurpose, [string, string]> = {
-  VERIFY_EMAIL: ['Verify your PredictDx e-mail', 'Use this code to verify your e-mail address'],
-  LOGIN_MFA: ['Your PredictDx sign-in code', 'Use this code to finish signing in'],
-  RESET_PASSWORD: ['Reset your PredictDx password', 'Use this code to reset your password'],
-};
 
 /**
  * Six-digit one-time codes. Only a peppered SHA-256 hash is stored; a code expires after
@@ -56,12 +51,8 @@ export class OtpService {
       },
     });
 
-    const [subject, lead] = COPY[purpose];
-    await this.mail.send(
-      user.email,
-      subject,
-      `Hello ${user.fullName},\n\n${lead}: ${code}\n\nIt expires in 5 minutes. If you did not ask for it, ignore this e-mail and consider changing your password.`,
-    );
+    const email = codeEmail(purpose, user.fullName, code, TTL_MS / 60_000);
+    await this.mail.send(user.email, email.subject, email.text, email.html);
     return process.env.OTP_DEV_ECHO === 'true' ? code : undefined;
   }
 

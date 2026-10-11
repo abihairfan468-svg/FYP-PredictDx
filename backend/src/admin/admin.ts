@@ -4,6 +4,7 @@ import { IsBoolean, IsIn, IsOptional, IsString, MaxLength } from 'class-validato
 import { PrismaService } from '../prisma/prisma.service';
 import { AuditService } from '../common/audit.service';
 import { MailService } from '../mail/mail.service';
+import { greeting } from '../mail/templates';
 import { NotificationsService } from '../notifications/notifications';
 import { RealtimeGateway } from '../realtime/realtime.gateway';
 import { AuthUser, CurrentUser, Roles } from '../common/decorators';
@@ -86,8 +87,8 @@ export class AdminController {
       d.user.email,
       dto.approve ? 'Your PredictDx doctor account is approved' : 'Your PredictDx doctor application',
       dto.approve
-        ? `Your PMDC licence ${d.pmdcNumber} has been verified. You can now sign in as a doctor and patients can book you.`
-        : `We could not verify PMDC licence ${d.pmdcNumber}.${dto.reason ? `\nReason: ${dto.reason}` : ''}\nReply to this e-mail to appeal.`,
+        ? `${greeting(d.user.fullName)}\nYour PMDC licence ${d.pmdcNumber} has been verified. You can now sign in to PredictDx as a doctor, and patients can find and book you.`
+        : `${greeting(d.user.fullName)}\nWe could not verify PMDC licence ${d.pmdcNumber}.${dto.reason ? `\nReason: ${dto.reason}` : ''}\nIf you think this is a mistake, contact the PredictDx administrator with a clear copy of your licence.`,
     );
     if (dto.approve) await this.notifications.notify(d.userId, 'account.approved', 'Account approved', 'Your licence is verified. Welcome to PredictDx.', '/app/workspace');
     return { ok: true };
