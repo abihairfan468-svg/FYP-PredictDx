@@ -145,20 +145,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 
   List<Widget> _modeAndRoles() => [
-        SegmentedButton<_Step>(
-          segments: const [ButtonSegment(value: _Step.signin, label: Text('Sign in')), ButtonSegment(value: _Step.signup, label: Text('Create account'))],
-          selected: {step},
-          showSelectedIcon: false,
-          style: ButtonStyle(
-            backgroundColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? C.surface : C.surface3),
-            foregroundColor: WidgetStateProperty.resolveWith((s) => s.contains(WidgetState.selected) ? C.ink : C.ink2),
-          ),
-          onSelectionChanged: (s) => setState(() {
-            step = s.first;
-            error = null;
-            if (step == _Step.signup && role == 'ADMIN') role = 'PATIENT';
-          }),
-        ),
+        Text(step == _Step.signin ? 'Sign in' : 'Create account', style: TextStyle(color: C.ink, fontSize: 22, fontWeight: FontWeight.w800)),
         const SizedBox(height: 14),
         Text('I AM A', style: TextStyle(color: C.muted, fontSize: 10, fontWeight: FontWeight.w800, letterSpacing: 1.2)),
         const SizedBox(height: 8),
@@ -234,7 +221,21 @@ class _AuthScreenState extends State<AuthScreen> {
           SizedBox(width: 5),
           Text('Two-step sign-in is on', style: TextStyle(color: C.muted, fontSize: 12)),
         ]),
+        _switchLine('New to PredictDx?', 'Create an account', _Step.signup),
       ];
+
+  /// "New to PredictDx? Create an account" / "Already have an account? Sign in" under each form.
+  Widget _switchLine(String text, String action, _Step to) => Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        Text(text, style: TextStyle(color: C.ink2, fontSize: 13)),
+        TextButton(
+          onPressed: () => setState(() {
+            step = to;
+            error = null;
+            if (to == _Step.signup && role == 'ADMIN') role = 'PATIENT';
+          }),
+          child: Text(action, style: const TextStyle(color: C.brand, fontWeight: FontWeight.w700)),
+        ),
+      ]);
 
   List<Widget> _signup() => [
         TextField(controller: name, decoration: InputDecoration(labelText: 'Full name', hintText: role == 'DOCTOR' ? 'Dr Firstname Lastname' : 'Firstname Lastname')),
@@ -314,6 +315,8 @@ class _AuthScreenState extends State<AuthScreen> {
             _run(() async => _after(await auth.register(body)));
           },
         ),
+        const SizedBox(height: 4),
+        _switchLine('Already have an account?', 'Sign in', _Step.signin),
       ];
 
   List<Widget> _otp() => [
